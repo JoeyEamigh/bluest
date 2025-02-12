@@ -41,6 +41,12 @@ impl AdapterImpl {
             .map(|inner| AdapterImpl { inner, session })
     }
 
+    /// Creates an interface to the default Bluetooth adapter for the system
+    pub async fn by_name(name: &str) -> Option<Self> {
+        let session = Arc::new(bluer::Session::new().await.ok()?);
+        session.adapter(name).ok().map(|inner| AdapterImpl { inner, session })
+    }
+
     /// A stream of [`AdapterEvent`] which allows the application to identify when the adapter is enabled or disabled.
     pub async fn events(&self) -> Result<impl Stream<Item = Result<AdapterEvent>> + Send + Unpin + '_> {
         let stream = self.inner.events().await?;

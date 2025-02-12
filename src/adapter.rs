@@ -33,6 +33,13 @@ impl Adapter {
         sys::adapter::AdapterImpl::default().await.map(Adapter)
     }
 
+    /// Creates an interface to the default Bluetooth adapter for the system
+    #[inline]
+    #[cfg(target_os = "linux")]
+    pub async fn by_name(name: &str) -> Option<Self> {
+        sys::adapter::AdapterImpl::by_name(name).await.map(Adapter)
+    }
+
     /// A stream of [`AdapterEvent`] which allows the application to identify when the adapter is enabled or disabled.
     #[inline]
     pub async fn events(&self) -> Result<impl Stream<Item = Result<AdapterEvent>> + Send + Unpin + '_> {
